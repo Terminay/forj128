@@ -6,17 +6,17 @@
 
 **Educational 128-bit hash function implemented from scratch in C.**
 
-> ⚠️ **Warning:** This is a learning project. It is **not cryptographically audited** and should **not** be used to protect real secrets.
+> **Warning:** This is a learning project. It is **not cryptographically audited** and should **not** be used to protect real secrets.
 
 ## What It Is
 
 Forj128 is a 128-bit cryptographic hash function demonstrating **Merkle-Damgard construction**. It processes data in 512-bit blocks and produces a 32-character hexadecimal digest.
 
 **Key characteristics:**
-- 🎓 Built for learning how hash functions work
-- 🔍 Transparent design with runtime constant generation
-- 📊 Measurable avalanche effect (~50% output bit flip rate)
-- 🚀 Fast and lightweight (no heavy dependencies)
+- Built for learning how hash functions work
+- Transparent design with runtime constant generation
+- Measurable avalanche effect (~50% output bit flip rate)
+- Fast and lightweight (no heavy dependencies)
 
 ## Installation
 
@@ -144,10 +144,10 @@ Avalanche test over 2752 single-bit flips:
 
 ### Key Features
 
-- ✅ **Runtime constant generation** - No hardcoded magic numbers
-- ✅ **Custom S-box** - Generated from seed using splitmix32 PRNG
-- ✅ **Strong avalanche** - Each input bit flip changes ~50% of output bits
-- ✅ **Cross-platform** - Works on Linux, macOS, Windows
+- **Runtime constant generation** - No hardcoded magic numbers
+- **Custom S-box** - Generated from seed using splitmix32 PRNG
+- **Strong avalanche** - Each input bit flip changes ~50% of output bits
+- **Cross-platform** - Works on Linux, macOS, Windows
 
 ## Project Structure
 
@@ -173,10 +173,10 @@ forj128/
 
 ## Limitations
 
-- ❌ Not peer-reviewed or cryptographically audited
-- ❌ No formal proof of collision resistance
-- ❌ S-box not tested for differential/linear cryptanalysis
-- ❌ Not suitable for password hashing (no cost/work factor)
+- Not peer-reviewed or cryptographically audited
+- No formal proof of collision resistance
+- S-box not tested for differential/linear cryptanalysis
+- Not suitable for password hashing (no cost/work factor)
 
 ## When to Use This
 
@@ -218,4 +218,4 @@ Built as a learning exercise to understand hash function design. Inspired by MD5
 
 ---
 
-**Questions?** Open an issue or reach out. Happy hashing! 🔐
+**Questions?** Open an issue or reach out. Happy hashing!
