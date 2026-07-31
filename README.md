@@ -200,7 +200,46 @@ This is an educational project. Contributions welcome!
 2. Create a branch (`git checkout -b feature/your-feature`)
 3. Commit changes (`git commit -am 'Add feature'`)
 4. Push (`git push origin feature/your-feature`)
-5. Open a Pull Request`
+5. Open a Pull Request
+
+## Publishing to PyPI
+
+This project uses **trusted publishing** via GitHub Actions. When you create a new release on GitHub, it automatically publishes to PyPI.
+
+### Setup (one-time)
+
+1. Go to https://pypi.org/project/forj128/manage/ (create the project first if it doesn't exist)
+2. Go to **Settings** → **Publishing**
+3. Click **"Add a new pending publisher"**
+4. Fill in:
+   - **Owner:** Terminay
+   - **Repository:** forj128
+   - **Workflow name:** Publish to PyPI
+   - **Environment name:** pypi
+5. Click **"Add"**
+
+### How to publish
+
+**Option 1: Create a GitHub release (recommended)**
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+gh release create v1.0.0 --title "v1.0.0" --notes "Initial release"
+```
+
+**Option 2: Manual trigger**
+1. Go to your GitHub repo → Actions tab
+2. Select "Publish to PyPI" workflow
+3. Click "Run workflow" → "Run workflow"
+
+The GitHub Actions workflow will automatically build and publish to PyPI.
+
+### Verify
+
+```bash
+pip install forj128
+python -c "from forj128 import hash_hex; print(hash_hex(b'test'))"
+```
 
 ## License
 
