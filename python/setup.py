@@ -3,9 +3,9 @@ import os
 
 # Determine the shared library extension
 lib_name = "libforj128.so"
-if os.path.exists("../forj128.dll"):
+if os.path.exists("forj128.dll"):
     lib_name = "forj128.dll"
-elif os.path.exists("../libforj128.dylib"):
+elif os.path.exists("libforj128.dylib"):
     lib_name = "libforj128.dylib"
 
 setup(

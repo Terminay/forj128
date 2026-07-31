@@ -28,8 +28,11 @@ jobs:
       - name: Build shared library
         run: gcc -Wall -Wextra -O2 -fPIC -shared forj128.c -o libforj128.so -lm
 
+      - name: Copy shared library
+        run: cp libforj128.so python/
+
       - name: Build package
-        run: cd python && python -m build
+        run: cd python && python setup.py bdist_wheel sdist
 
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
