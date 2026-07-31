@@ -3,6 +3,7 @@ name: Publish to PyPI
 on:
   release:
     types: [published]
+  workflow_dispatch:
 
 jobs:
   publish:
@@ -25,7 +26,9 @@ jobs:
           pip install build
 
       - name: Build package
-        run: python -m build
+        run: cd python && python -m build
 
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: python/dist
