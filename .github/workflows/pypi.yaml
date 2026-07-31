@@ -25,6 +25,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install build
 
+      - name: Build shared library
+        run: gcc -Wall -Wextra -O2 -fPIC -shared forj128.c -o libforj128.so -lm
+
       - name: Build package
         run: cd python && python -m build
 
