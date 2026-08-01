@@ -1,6 +1,6 @@
 {
   "name": "forj128",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Forj128 - Educational 128-bit hash function",
   "main": "index.js",
   "scripts": {
