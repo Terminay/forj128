@@ -28,6 +28,8 @@ setup(
     name="forj128",
     version="1.0.1",
     description="Educational 128-bit hash function",
+    long_description=(Path(__file__).resolve().parent / "README.md").read_text(encoding="utf-8"),
+    long_description_content_type="text/markdown",
     author="Forj128",
     license="MIT",
     packages=["forj128"],

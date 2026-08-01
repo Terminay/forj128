@@ -3,6 +3,7 @@
   "version": "1.0.1",
   "description": "Educational 128-bit hash function",
   "main": "index.js",
+  "readme": "README.md",
   "scripts": {
     "build": "node-gyp rebuild",
     "test": "node test.js"
