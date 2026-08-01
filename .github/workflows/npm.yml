@@ -30,7 +30,9 @@ jobs:
         run: npm ci --ignore-scripts
 
       - name: Build native addon
-        run: npm run build
+        run: |
+          rm -rf build
+          npm run build
 
       - name: Publish to npm
         run: npm publish

@@ -1,38 +1,40 @@
-#include <nan.h>
+#include <napi.h>
 #include "forj128.h"
 
-using namespace Nan;
-using namespace v8;
+namespace {
 
-NAN_MODULE_INIT(Init) {
-    Set(target, New<String>("hash").ToLocalChecked(),
-        New<Function>(Hash));
-}
+Napi::Value Hash(const Napi::CallbackInfo& info) {
+    Napi::Env env = info.Env();
 
-NAN_METHOD(Hash) {
     if (info.Length() < 1) {
-        ThrowTypeError("Expected one argument");
-        return;
+        Napi::TypeError::New(env, "Expected one argument").ThrowAsJavaScriptException();
+        return env.Null();
     }
 
-    Local<Value> arg = info[0];
-    if (!arg->IsString() && !Buffer::HasInstance(arg)) {
-        ThrowTypeError("Expected string or Buffer");
-        return;
+    Napi::Value arg = info[0];
+    if (!arg.IsString() && !arg.IsBuffer()) {
+        Napi::TypeError::New(env, "Expected string or Buffer").ThrowAsJavaScriptException();
+        return env.Null();
     }
 
     uint8_t digest[FORJ128_DIGEST_BYTES];
 
-    if (arg->IsString()) {
-        Utf8String str(arg);
-        forj128((const uint8_t*)*str, str.length(), digest);
+    if (arg.IsString()) {
+        std::string input = arg.As<Napi::String>().Utf8Value();
+        forj128(reinterpret_cast<const uint8_t*>(input.data()), input.size(), digest);
     } else {
-        char* data = Buffer::Data(arg);
-        size_t len = Buffer::Length(arg);
-        forj128((const uint8_t*)data, len, digest);
+        Napi::Buffer<uint8_t> buffer = arg.As<Napi::Buffer<uint8_t>>();
+        forj128(buffer.Data(), buffer.Length(), digest);
     }
 
-    info.GetReturnValue().Set(CopyBuffer((char*)digest, FORJ128_DIGEST_BYTES).ToLocalChecked());
+    return Napi::Buffer<uint8_t>::Copy(env, digest, FORJ128_DIGEST_BYTES);
 }
 
-NODE_MODULE(forj128, Init)
+}  // namespace
+
+Napi::Object Init(Napi::Env env, Napi::Object exports) {
+    exports.Set("hash", Napi::Function::New(env, Hash));
+    return exports;
+}
+
+NODE_API_MODULE(forj128, Init)
