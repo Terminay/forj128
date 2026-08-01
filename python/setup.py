@@ -27,7 +27,7 @@ if build_target.exists():
 setup(
     name="forj128",
     version="1.0.1",
-    description="Forj128 - Educational 128-bit hash function",
+    description="Educational 128-bit hash function",
     author="Forj128",
     license="MIT",
     packages=["forj128"],

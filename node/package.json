@@ -1,7 +1,7 @@
 {
   "name": "forj128",
   "version": "1.0.1",
-  "description": "Forj128 - Educational 128-bit hash function",
+  "description": "Educational 128-bit hash function",
   "main": "index.js",
   "scripts": {
     "build": "node-gyp rebuild",
@@ -13,6 +13,10 @@
     "educational",
     "native"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Terminay/forj128.git"
+  },
   "author": "Forj128",
   "license": "MIT",
   "dependencies": {
