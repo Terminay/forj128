@@ -201,6 +201,7 @@ This is an educational project. Contributions welcome!
 3. Commit changes (`git commit -am 'Add feature'`)
 4. Push (`git push origin feature/your-feature`)
 5. Open a Pull Request
+
 ## License
 
 MIT License - see [LICENSE](LICENSE) file for details. Feel free to use this code for learning purposes.
