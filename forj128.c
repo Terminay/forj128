@@ -116,6 +116,13 @@ void forj128(const uint8_t *data, size_t len, uint8_t out[FORJ128_DIGEST_BYTES])
     uint32_t k[64];
     uint8_t sbox[256];
 
+    if (out == NULL) {
+        return;
+    }
+    if (data == NULL && len > 0) {
+        return;
+    }
+
     forj128_init_state(state);
     forj128_init_constants(k);
     forj128_init_sbox(sbox);
@@ -124,7 +131,9 @@ void forj128(const uint8_t *data, size_t len, uint8_t out[FORJ128_DIGEST_BYTES])
     padded_len = ((padded_len + 63) / 64) * 64;
 
     uint8_t *buf = (uint8_t *)calloc(1, padded_len);
-    memcpy(buf, data, len);
+    if (len > 0) {
+        memcpy(buf, data, len);
+    }
     buf[len] = 0x80;
 
     uint64_t bit_len = (uint64_t)len * 8;
@@ -150,6 +159,10 @@ void forj128(const uint8_t *data, size_t len, uint8_t out[FORJ128_DIGEST_BYTES])
 
 void forj128_to_hex(const uint8_t digest[FORJ128_DIGEST_BYTES], char out_hex[33]) {
     static const char *hexchars = "0123456789abcdef";
+
+    if (digest == NULL || out_hex == NULL) {
+        return;
+    }
     for (int i = 0; i < 16; i++) {
         out_hex[i * 2]     = hexchars[digest[i] >> 4];
         out_hex[i * 2 + 1] = hexchars[digest[i] & 0xF];

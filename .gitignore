@@ -1,11 +1,14 @@
 # Build outputs
 forj128_cli
 avalanche_test
+test_forj128
+test_cli
 *.o
 *.a
 *.so
 *.dylib
 *.dll
+*.exe
 
 # Python
 __pycache__/

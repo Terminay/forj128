@@ -9,31 +9,34 @@ Example:
 """
 
 import ctypes
-import os
 from pathlib import Path
 
-# Load the shared library
-_lib_path = Path(__file__).parent.parent / "libforj128.so"
-if not _lib_path.exists():
-    _lib_path = Path(__file__).parent.parent / "libforj128.dylib"
-if not _lib_path.exists():
-    _lib_path = Path(__file__).parent.parent / "forj128.dll"
 
-_lib = ctypes.CDLL(str(_lib_path))
+def _resolve_library() -> Path:
+    package_dir = Path(__file__).resolve().parent
+    candidates = [
+        package_dir / "libforj128.so",
+        package_dir / "libforj128.dylib",
+        package_dir / "forj128.dll",
+        package_dir.parent / "libforj128.so",
+        package_dir.parent / "libforj128.dylib",
+        package_dir.parent / "forj128.dll",
+    ]
+    for candidate in candidates:
+        if candidate.exists():
+            return candidate
+    raise FileNotFoundError("Could not locate the forj128 shared library. Build it first or install the package with the bundled binary.")
+
+
+_lib = ctypes.CDLL(str(_resolve_library()))
 
 # Define function signatures
 _lib.forj128.argtypes = [
     ctypes.POINTER(ctypes.c_uint8),
     ctypes.c_size_t,
-    ctypes.POINTER(ctypes.c_uint8 * 16)
+    ctypes.POINTER(ctypes.c_uint8 * 16),
 ]
 _lib.forj128.restype = None
-
-_lib.forj128_to_hex.argtypes = [
-    ctypes.POINTER(ctypes.c_uint8 * 16),
-    ctypes.c_char_p
-]
-_lib.forj128_to_hex.restype = None
 
 
 def hash(data: bytes) -> bytes:
@@ -46,8 +49,13 @@ def hash(data: bytes) -> bytes:
     Returns:
         16-byte digest
     """
+    if not isinstance(data, (bytes, bytearray)):
+        raise TypeError("data must be bytes-like")
+
+    data_bytes = bytes(data)
     digest = (ctypes.c_uint8 * 16)()
-    _lib.forj128(data, len(data), ctypes.byref(digest))
+    buffer = (ctypes.c_uint8 * len(data_bytes)).from_buffer_copy(data_bytes)
+    _lib.forj128(buffer, len(data_bytes), ctypes.byref(digest))
     return bytes(digest)
 
 
@@ -61,8 +69,7 @@ def hash_hex(data: bytes) -> str:
     Returns:
         32-character lowercase hex string
     """
-    digest = hash(data)
-    return digest.hex()
+    return hash(data).hex()
 
 
 # Convenience function

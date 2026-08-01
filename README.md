@@ -4,88 +4,61 @@
 [![C](https://img.shields.io/badge/Language-C-blue.svg)](https://en.wikipedia.org/wiki/C_(programming_language))
 [![Build](https://img.shields.io/badge/Build-Make-green.svg)](https://www.gnu.org/software/make/)
 
-**Educational 128-bit hash function implemented from scratch in C.**
+Forj128 is an educational 128-bit hash function implemented from scratch in C. It is published on npm as `forj128` and on PyPI as `forj128`, and it is designed for experimentation, teaching, and non-security-critical fingerprinting rather than password protection or cryptographic signing.
 
-> **Warning:** This is a learning project. It is **not cryptographically audited** and should **not** be used to protect real secrets.
+> **Warning:** This project is for learning and experimentation. It is not cryptographically audited and should not be used to protect real secrets.
 
-## What It Is
+## What it does
 
-Forj128 is a 128-bit cryptographic hash function demonstrating **Merkle-Damgard construction**. It processes data in 512-bit blocks and produces a 32-character hexadecimal digest.
+Forj128 demonstrates a Merkle-Damgård style construction in a compact, readable implementation. It processes data in 512-bit blocks, derives runtime constants, uses a generated S-box, and produces a 16-byte digest that can be rendered as a 32-character lowercase hex string.
 
-**Key characteristics:**
-- Built for learning how hash functions work
-- Transparent design with runtime constant generation
-- Measurable avalanche effect (~50% output bit flip rate)
-- Fast and lightweight (no heavy dependencies)
+### Highlights
+
+- Lightweight and dependency-free at the core C level
+- Easy to inspect and adapt for teaching purposes
+- Supports C, Python, and Node.js entry points
+- Includes a small avalanche test to observe diffusion behavior
 
 ## Installation
 
-### Prerequisites
+### C library from source
 
+Prerequisites:
 - GCC or Clang
 - Make
-- `libm` (standard C math library)
-
-### Build from Source
+- The standard C math library (`libm`)
 
 ```bash
-git clone https://github.com/yourusername/forj128.git
+git clone https://github.com/Terminay/forj128.git
 cd forj128
 make
 ```
 
-This creates two binaries:
-- `forj128_cli` - Command-line hash tool
-- `avalanche_test` - Avalanche effect benchmark
-
-## Usage
-
-### Command Line
-
-```bash
-$ ./forj128_cli "hello world"
-a1b2c3d4e5f6...
-```
-
-### C Library
-
-```c
-#include "forj128.h"
-
-uint8_t digest[FORJ128_DIGEST_BYTES];
-char hex[33];
-
-forj128((const uint8_t *)"input", 5, digest);
-forj128_to_hex(digest, hex);
-printf("%s\n", hex);
-```
+This produces:
+- `forj128_cli` for hashing text from the command line
+- `avalanche_test` for a simple diffusion benchmark
+- `libforj128.so` for native integration
 
 ### Python
 
-Install the Python bindings:
+```bash
+pip install forj128
+```
+
+Or from a local checkout:
 
 ```bash
 cd python
 pip install .
 ```
 
-Or use directly with ctypes:
+### Node.js
 
-```python
-from forj128 import hash, hash_hex
-
-# Hash bytes
-digest = hash(b"hello world")
-print(digest.hex())  # a1b2c3d4e5f6...
-
-# Get hex string directly
-hex_str = hash_hex(b"hello world")
-print(hex_str)
+```bash
+npm install forj128
 ```
 
-### Node.js / JavaScript
-
-Build the native addon:
+For a local build from source:
 
 ```bash
 cd node
@@ -93,29 +66,69 @@ npm install
 npm run build
 ```
 
-Use in your code:
+On Windows, native Node builds may require Visual Studio Build Tools with a compatible C/C++ toolchain such as ClangCL or MSVC.
 
-```javascript
-const forj128 = require('./node');
+## Usage
 
-// Hash string
-const digest = forj128.hash("hello world");
-console.log(digest.toString('hex'));
-
-// Get hex string
-const hex = forj128.hashHex("hello world");
-console.log(hex);
-```
-
-### WebAssembly (WASM)
-
-You can also compile to WebAssembly for browser use:
+### Command line
 
 ```bash
-emcc forj128.c -o forj128.wasm -O2 -s EXPORTED_FUNCTIONS="['forj128']" -s EXPORTED_RUNTIME_METHODS="['ccall']"
+./forj128_cli "hello world"
 ```
 
-## Run Tests
+### C
+
+```c
+#include "forj128.h"
+
+uint8_t digest[FORJ128_DIGEST_BYTES];
+char hex[33];
+
+forj128((const uint8_t *)"hello world", 11, digest);
+forj128_to_hex(digest, hex);
+printf("%s\n", hex);
+```
+
+### Python
+
+```python
+from forj128 import hash, hash_hex
+
+print(hash(b"hello world").hex())
+print(hash_hex(b"hello world"))
+```
+
+### Node.js
+
+```javascript
+const forj128 = require('forj128');
+
+console.log(forj128.hashHex('hello world'));
+```
+
+## Use cases
+
+Forj128 is best suited for:
+- Learning how hash functions are structured
+- Teaching Merkle-Damgård style design and avalanche behavior
+- Building small fingerprints for non-security-critical caches or deduplication checks
+- Experimenting with custom round functions and state layout
+
+It is not a good fit for:
+- Password storage
+- Digital signatures
+- Certificate or token validation
+- Any security-sensitive verification flow
+
+## Testing
+
+Run the C regression tests:
+
+```bash
+make test
+```
+
+Run the avalanche benchmark:
 
 ```bash
 ./avalanche_test
@@ -123,99 +136,54 @@ emcc forj128.c -o forj128.wasm -O2 -s EXPORTED_FUNCTIONS="['forj128']" -s EXPORT
 
 Example output:
 
-```
+```text
 Avalanche test over 2752 single-bit flips:
   Average bits flipped: 64.01 (50.0%)
   Ideal: 64.00 bits (50.0%)
 ```
 
-## Design
+## Design notes
 
-| Aspect | Implementation | Details |
-|--------|---------------|---------|
-| **Construction** | Merkle-Damgard | Same as MD5, SHA-1, SHA-256 |
-| **Digest size** | 128 bits | Four 32-bit words |
-| **Block size** | 512 bits | Standard |
-| **IV** | `sqrt(23,29,31,37)` frac. bits | Computed at runtime |
-| **Round constants** | 5th root of first 64 primes | Computed at runtime |
-| **S-box** | Generated from seed | Fisher-Yates shuffle |
-| **Round function** | MD5-style with S-box | Adds "fingerprint" step |
-| **Finalization** | Cross-XOR with rotation | "Forge" step |
+| Aspect | Implementation | Notes |
+|--------|---------------|-------|
+| Construction | Merkle-Damgård style | Similar in spirit to classic hash designs |
+| Digest size | 128 bits | 16 bytes |
+| Block size | 512 bits | Standard block size for the design |
+| IV | Runtime-derived fractional roots | Avoids hardcoded magic constants |
+| Round constants | Runtime-derived from primes | Generated at startup |
+| S-box | Seeded and shuffled | Introduces a custom permutation |
+| Finalization | Cross-XOR and rotation | Adds a simple final mixing step |
 
-### Key Features
+## Project structure
 
-- **Runtime constant generation** - No hardcoded magic numbers
-- **Custom S-box** - Generated from seed using splitmix32 PRNG
-- **Strong avalanche** - Each input bit flip changes ~50% of output bits
-- **Cross-platform** - Works on Linux, macOS, Windows
-
-## Project Structure
-
-```
+```text
 forj128/
-├── forj128.h                  # Public API (C)
-├── forj128.c                  # Core hash implementation
-├── main.c                     # CLI tool
-├── avalanche_test.c           # Avalanche effect benchmark
-├── Makefile                   # Build system
-├── LICENSE                    # MIT License
-├── .gitignore                 # Git ignore rules
+├── forj128.c
+├── forj128.h
+├── main.c
+├── avalanche_test.c
+├── tests/test_forj128.c
+├── Makefile
 ├── python/
-│   ├── forj128/
-│   │   └── __init__.py       # Python bindings (ctypes)
-│   └── setup.py              # Python package setup
 ├── node/
-│   ├── index.js              # Node.js wrapper
-│   ├── binding.gyp           # node-gyp config
-│   └── forj128_binding.cpp   # N-API/NAN bindings
-└── README.md                  # This file
+└── README.md
 ```
 
 ## Limitations
 
 - Not peer-reviewed or cryptographically audited
 - No formal proof of collision resistance
-- S-box not tested for differential/linear cryptanalysis
-- Not suitable for password hashing (no cost/work factor)
-
-## When to Use This
-
-**Good for:**
-- Learning how hash functions work
-- Teaching cryptography concepts
-- Non-security-critical applications
-- Experimenting with hash design
-
-**Bad for:**
-- Password hashing (use bcrypt/argon2 instead)
-- Digital signatures (use SHA-256/SHA-3)
-- Security-sensitive applications
-- Production systems
+- Not suitable for password hashing or secret protection
+- Designed for education first, security second
 
 ## Contributing
 
-This is an educational project. Contributions welcome!
-
-1. Fork the repo
-2. Create a branch (`git checkout -b feature/your-feature`)
-3. Commit changes (`git commit -am 'Add feature'`)
-4. Push (`git push origin feature/your-feature`)
-5. Open a Pull Request
+Contributions are welcome, especially around test coverage, portability improvements, and documentation clarity.
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) file for details. Feel free to use this code for learning purposes.
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
 
 ## Credits
 
-Built as a learning exercise to understand hash function design. Inspired by MD5, SHA-1, SHA-256, and AES.
-
-## Related Projects
-
-- [hashlib](https://docs.python.org/3/library/hashlib.html) - Python's standard hash library
-- [crypto](https://nodejs.org/api/crypto.html) - Node.js crypto module
-- [OpenSSL](https://www.openssl.org/) - Production-grade cryptography
-
----
-
-**Questions?** Open an issue or reach out. Happy hashing!
+Built as a learning exercise to understand hash function design. It draws inspiration from classic constructions such as MD5 and SHA-family hashes, while remaining intentionally simple and inspectable.
