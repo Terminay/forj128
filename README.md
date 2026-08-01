@@ -3,8 +3,12 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![C](https://img.shields.io/badge/Language-C-blue.svg)](https://en.wikipedia.org/wiki/C_(programming_language))
 [![Build](https://img.shields.io/badge/Build-Make-green.svg)](https://www.gnu.org/software/make/)
+![npm version](https://img.shields.io/npm/v/forj128)
+![pypi version](https://img.shields.io/pypi/v/forj128)
 
 Forj128 is an educational 128-bit hash function implemented from scratch in C. It is published on npm as `forj128` and on PyPI as `forj128`, and it is designed for experimentation, teaching, and non-security-critical fingerprinting rather than password protection or cryptographic signing.
+
+![gif](forj128_gif.gif)
 
 > **Warning:** This project is for learning and experimentation. It is not cryptographically audited and should not be used to protect real secrets.
 
@@ -154,21 +158,6 @@ Avalanche test over 2752 single-bit flips:
 | S-box | Seeded and shuffled | Introduces a custom permutation |
 | Finalization | Cross-XOR and rotation | Adds a simple final mixing step |
 
-## Project structure
-
-```text
-forj128/
-├── forj128.c
-├── forj128.h
-├── main.c
-├── avalanche_test.c
-├── tests/test_forj128.c
-├── Makefile
-├── python/
-├── node/
-└── README.md
-```
-
 ## Limitations
 
 - Not peer-reviewed or cryptographically audited
@@ -187,3 +176,5 @@ This project is licensed under the MIT License. See [LICENSE](LICENSE) for detai
 ## Credits
 
 Built as a learning exercise to understand hash function design. It draws inspiration from classic constructions such as MD5 and SHA-family hashes, while remaining intentionally simple and inspectable.
+
+**I would appreciate a ⭐ if you liked this project**
